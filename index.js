@@ -3,7 +3,7 @@ const get_data_buitton = document.getElementById("get_data")
 async function get_data() {
 
     try {
-        const res = await fetch("http://127.0.0.1:8000/vehicles", {
+        const res = await fetch("https://python-fastapi-testshodai-cphxbvcmfwehg7f0.japanwest-01.azurewebsites.net/health/db", {
             method: "GET"
         })
 
