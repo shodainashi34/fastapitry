@@ -3,9 +3,11 @@ import os
 from typing import Optional
 
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sqlalchemy import create_engine, Column, Integer, String, Text, text
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
+
 
 # =========================
 # DB (PostgreSQL) 設定
@@ -67,6 +69,18 @@ class ItemOut(BaseModel):
 # App
 # =========================
 app = FastAPI()
+
+origins = [
+    "https://shodaitest-efamfshqejgqh6b6.japanwest-01.azurewebsites.net",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,          # 本番は * ではなくURL指定推奨
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.on_event("startup")
