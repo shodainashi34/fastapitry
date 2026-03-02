@@ -1,0 +1,26 @@
+name: Deploy static files to Azure Web App
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create zip
+        run: |
+          mkdir -p package
+          cp -r index.html index.js package/
+          cd package
+          zip -r ../site.zip .
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: shodaitest
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: site.zip
