@@ -25,9 +25,15 @@ engine = create_engine(
     max_overflow=10,
 )
 
+#########sqliteで対応############
+
+# DATABASE_URL ="sqlite:///./app.db"
+# engine = create_engine(DATABASE_URL, connect_args={"check_same_thread":False})
+
+####################################
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-
 
 def get_db():
     db = SessionLocal()
@@ -47,6 +53,16 @@ class Item(Base):
     title = Column(String(200), nullable=False)
     description = Column(Text, nullable=True)
 
+
+###########sqlite専用###########
+
+
+
+# Base.metadata.create_all(bind=engine)
+
+
+
+##################################
 
 # =========================
 # Schema (Pydantic)
@@ -76,7 +92,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,          # 本番は * ではなくURL指定推奨
+    allow_origins=origins,# 本番は * ではなくorigins推奨
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -93,8 +109,8 @@ def on_startup():
 # 疎通確認（DBにつながるか）
 @app.get("/health/db")
 def health_db(db: Session = Depends(get_db)):
-    db.execute(text("SELECT 1"))
-    return {"ok": True}
+    item = db.query(Item).all()
+    return item
 
 
 # 追加（登録）
